@@ -26,9 +26,11 @@ Route::group('/test', function(){
 
     Route::any('db/v1/test', 'test.DbTestV1/test');
 
-    Route::any('common/test', 'test.common/test');
+    Route::any('common/test', 'test.Common/test');
 
     Route::any('upload/test', 'test.Upload/test');
+
+    Route::any('interview/test', 'test.Interview/test');
 
 
 });

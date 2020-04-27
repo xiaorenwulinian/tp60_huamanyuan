@@ -20,6 +20,20 @@ class Upload extends TestBase
 
     public function test() {
 
+        $word = "张";
+        $arr = [
+            2 => 'abc张三a',
+            5 => '张b哎c张四a',
+            6 => 'abc李三a',
+        ];
+        $new = [];
+        foreach ($arr as $k =>$v) {
+            if (strstr($v, $word)) {
+                $new[$k] = $v;
+            }
+        }
+        dump($new);
+        return 1;
 //        $ret =  $this->upload();
         $ret =  $this->isExists();
 //        $ret =  $this->delete();

@@ -4,7 +4,7 @@ namespace app\common\tools;
 
 
 use app\exception\LclJwtException;
-use app\libs\lclJwt\LclJwtLib;
+use app\libs\lclJwt\XcxPay;
 
 class LclJwtTool
 {
@@ -41,7 +41,7 @@ class LclJwtTool
         $authorization = request()->header('authorization');
         $authorizationArr = explode(' ', $authorization);
         $jwtToken = $authorizationArr[1] ?? '';
-        $decryptRet = LclJwtLib::decrypt($jwtToken, $secretKey);
+        $decryptRet = XcxPay::decrypt($jwtToken, $secretKey);
         if ($decryptRet['code'] !== 0) {
             if ($decryptRet['code'] == 1) {
                 throw new LclJwtException($decryptRet['message'], 401);
@@ -73,7 +73,7 @@ class LclJwtTool
         $authorization = request()->header('authorization');
         $authorizationArr = explode(' ', $authorization);
         $jwtToken = $authorizationArr[1] ?? '';
-        $decryptRet = LclJwtLib::decrypt($jwtToken, $secretKey);
+        $decryptRet = XcxPay::decrypt($jwtToken, $secretKey);
         if ($decryptRet['code'] !== 0) {
             if ($decryptRet['code'] == 1) {
                 throw new LclJwtException($decryptRet['message'], 401);
@@ -109,7 +109,7 @@ class LclJwtTool
             "wxId"       => $wechat['id'], // 微信ID
             "weChatInfo" => $wechat, // 微信信息
         );
-        $jwtToken = LclJwtLib::encrypt($secretData, $secretKey);
+        $jwtToken = XcxPay::encrypt($secretData, $secretKey);
         return $jwtToken;
     }
 }
