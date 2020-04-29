@@ -1,0 +1,3 @@
+
+java 应用 FilterInputStream
+inputStream 输入流 -> 字节文件输入流(FilterInputStream) -> 缓冲流 (BufferInputStream / DataInputStream)
