@@ -10,7 +10,7 @@ class Privilege extends AdminBase
 {
     public function lst()
     {
-        $p = Db::name('u_privilege')
+        $p = Db::name('privilege')
             ->order('parent_id','asc')
             ->order('sort_id','asc')
             ->select()
@@ -21,6 +21,6 @@ class Privilege extends AdminBase
 
         ];
 
-        return view('admin/u_privilege/lst', $ret);
+        return view('admin/privilege/lst', $ret);
     }
 }

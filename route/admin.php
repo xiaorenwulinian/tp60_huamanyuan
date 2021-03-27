@@ -27,6 +27,14 @@ Route::group('/admin', function(){
 
     })->middleware([app\middleware\AdminAuthCheck::class]);
 
+    Route::group('privilege', function () {
+        Route::get('lst', 'admin.privilege/lst');
+        Route::any('add', 'admin.privilege/add');
+        Route::any('edit', 'admin.privilege/edit');
+        Route::any('changeShow', 'admin.privilege/changeShow');
+        Route::any('delete', 'admin.privilege/delete');
+        Route::any('editSort', 'admin.privilege/editSort');
+    });
     // 商品分类，暂未使用
     Route::group('goodsCategory', function () {
         Route::get('lst', 'admin.GoodsCategory/lst');
