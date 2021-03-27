@@ -154,7 +154,7 @@
                 var result = data.result;
                 console.log(data);
                 if(result.code == 0) {
-                    var _data = result.payload;
+                    var _data = result.data;
                     $("input[name='adv_img']").val(_data.file_path);
                     $("input[name='adv_img_thumb']").val(_data.file_path_thumb);
 

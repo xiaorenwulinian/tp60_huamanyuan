@@ -291,7 +291,7 @@
                 var result = data.result;
                 console.log(data);
                 if(result.code == 0) {
-                    var _data = result.payload;
+                    var _data = result.data;
                     $("input[name='goods_img']").val(_data.file_path);
                     $("input[name='goods_img_thumb']").val(_data.file_path_thumb);
 
@@ -333,7 +333,7 @@
                 var result = data.result;
                 console.log(data);
                 if(result.code == 0) {
-                    var _data = result.payload;
+                    var _data = result.data;
                     goods_introduce_imgs.push(_data.file_path);
                     goods_introduce_thumb_imgs.push(_data.file_path_thumb);
                     var _html ="";

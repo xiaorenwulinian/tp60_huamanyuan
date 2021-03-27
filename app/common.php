@@ -15,7 +15,7 @@ if (!function_exists('success_response')) {
            'code'      => $code,
            'msg'       => $message,
            'timestamp' => time(),
-           'payload'   => $data
+           'data'   => $data
        ];
        $header = [];
         return json($ret, 200, $header);
@@ -36,12 +36,74 @@ if (!function_exists('failed_response')) {
             'code'      => $code,
             'msg'       => $message,
             'timestamp' => time(),
-            'payload'   => []
+            'data'   => []
         ];
         $header = [];
         return json($ret, 200, $header);
     }
 }
+
+
+if (!function_exists('api_failed')) {
+    /**
+     * api失败返回体
+     * @param string $message
+     * @param int $code
+     * @param array $data
+     * @return \think\response\Json
+     */
+    function api_failed($message = 'errors', $code = 1, $data = [], $header = [])
+    {
+        $result = [
+            'code'     => $code,
+            'msg'       => $message,
+            'data'      => $data,
+            'time'      => time(),
+        ];
+//        return json($result);
+        $response = \think\Response::create($result, 'json', 200)->header($header);
+        throw new \think\exception\HttpResponseException($response);
+    }
+}
+
+if (!function_exists('result_successed')) {
+    /**
+     * 第三方/services 成功返回组装
+     * @param array $data
+     * @param int $code
+     * @param string $message
+     * @return array
+     */
+    function result_successed($data = [], $message = 'success', $code = 0)
+    {
+        $ret = [
+            'code'    => $code,
+            'msg'     => $message,
+            'data'    => $data,
+        ];
+        return $ret;
+    }
+}
+
+if (!function_exists('result_failed')) {
+    /**
+     * 第三方/services 失败返回组装
+     * @param array $data
+     * @param int $code
+     * @param string $message
+     * @return array
+     */
+    function result_failed($message = 'error', $code = 1, $data = [] )
+    {
+        $ret = [
+            'code'    => $code,
+            'msg'     => $message,
+            'data'    => $data,
+        ];
+        return $ret;
+    }
+}
+
 
 if (!function_exists('page_size_select')) {
     /**
