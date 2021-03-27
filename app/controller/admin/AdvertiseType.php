@@ -3,8 +3,7 @@
 namespace app\controller\admin;
 
 
-use app\common\tools\ArrayTool;
-use app\common\tools\ExcelTool;
+use app\common\library\excel\ExcelLib;
 use think\facade\Db;
 use think\facade\Route;
 
@@ -155,6 +154,6 @@ class AdvertiseType extends AdminBase
             'id','name','desc', 'identify_en'
         ];
         $file_name = '广告栏目'. date('YmdHis');
-        ExcelTool::excelExport($exportData, $header, $field, $file_name);
+        ExcelLib::excelExport($exportData, $header, $field, $file_name);
     }
 }

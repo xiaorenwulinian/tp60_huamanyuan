@@ -1,12 +1,12 @@
 <?php
 
-namespace app\common\tools;
+namespace app\common\library;
 
 
+use app\common\library\wechat\XcxPay;
 use app\exception\LclJwtException;
-use app\libs\lclJwt\XcxPay;
 
-class LclJwtTool
+class LclJwtLib
 {
 
     protected static $instance ;

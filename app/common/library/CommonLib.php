@@ -3,7 +3,7 @@
 namespace app\common\tools;
 
 
-class CommonTool
+class CommonLib
 {
 
     /**

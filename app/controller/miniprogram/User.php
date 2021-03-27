@@ -3,7 +3,7 @@
 namespace app\controller\miniprogram;
 
 
-use app\common\tools\LclJwtTool;
+use app\common\library\LclJwtLib;
 use think\App;
 
 class User extends MiniProgramBase
@@ -15,7 +15,7 @@ class User extends MiniProgramBase
 
    public function detail()
    {
-       $wechatInfo = LclJwtTool::getInstance()->getWeChatInfoMiniProgram();
+       $wechatInfo = LclJwtLib::getInstance()->getWeChatInfoMiniProgram();
        if (empty($wechatInfo['phone'])) {
            return failed_response('', 418);
        }

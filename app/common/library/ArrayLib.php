@@ -1,10 +1,11 @@
 <?php
 
-namespace app\common\tools;
+namespace app\common\library;
 
 
-class ArrayTool
+class ArrayLib
 {
+
 
     /**
      * 获取所有的树形菜单

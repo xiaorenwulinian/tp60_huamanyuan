@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\tools;
+namespace app\common\library;
 
 
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class FileTool
+class FileLib
 {
     /**
      * 返回文件夹路径，以分隔符结尾

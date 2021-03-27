@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\tools;
+namespace app\common\library\excel;
 
 
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class ExcelTool
+class ExcelLib
 {
 
     /**

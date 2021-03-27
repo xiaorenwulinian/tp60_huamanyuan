@@ -4,7 +4,6 @@ namespace app\controller\admin;
 
 
 use app\common\library\ArrayLib;
-use app\common\tools\ArrayTool;
 use think\facade\Db;
 
 class Privilege extends AdminBase
@@ -16,7 +15,7 @@ class Privilege extends AdminBase
             ->order('sort_id','asc')
             ->select()
             ->toArray();
-        $data = ArrayTool::getTree($p);
+        $data = ArrayLib::getTree($p);
         $ret = [
             'data'           => $data,
 

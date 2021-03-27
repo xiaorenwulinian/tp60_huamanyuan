@@ -3,7 +3,7 @@
 namespace app\controller\miniprogram;
 
 
-use app\common\tools\LclJwtTool;
+use app\common\library\LclJwtLib;
 use app\logic\WeChatLogic;
 use app\model\Wechat;
 use GuzzleHttp\Client;
@@ -22,7 +22,7 @@ class Login extends MiniProgramBase
         $user = [
             'id' => '3'
         ];
-        $token = LclJwtTool::getInstance()->generateTokenMiniProgram($user);
+        $token = LclJwtLib::getInstance()->generateTokenMiniProgram($user);
         $ret = [
             'userInfo'  => $user,
             'token'     => $token
@@ -60,7 +60,7 @@ class Login extends MiniProgramBase
             $status = 417; // 未填充微信信息
         }
 
-        $token = LclJwtTool::getInstance()->generateTokenMiniProgram($wxInfo);
+        $token = LclJwtLib::getInstance()->generateTokenMiniProgram($wxInfo);
         $result = [
             'status'        => $status,
             'authorization' => $token,
@@ -72,7 +72,7 @@ class Login extends MiniProgramBase
 
     public function fillWeChatInfo()
     {
-        $wechat = LclJwtTool::getInstance()->getWeChatInfoMiniProgram();
+        $wechat = LclJwtLib::getInstance()->getWeChatInfoMiniProgram();
         $wechatId = $wechat['id'];
         $sessionKey = $wechat['xcx_session_key'];
         $encryptedData = input('encryptedData');

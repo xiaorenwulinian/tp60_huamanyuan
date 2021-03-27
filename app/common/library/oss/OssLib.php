@@ -1,9 +1,10 @@
 <?php
-namespace app\common\tools;
+namespace app\common\library\oss;
 
 use OSS\OssClient;
+use think\Env;
 
-class UploadTool
+class OssLib
 {
 
     private static $instance = null;
@@ -18,11 +19,12 @@ class UploadTool
 
     public function __construct()
     {
-        $this->accessKeyId     = env('alioss.access_key_id');
-        $this->accessKeySecret = env('alioss.access_key_secret');
-        $this->endpoint        = env('alioss.endpoint');
-        $this->bucket          = env('alioss.bucket');
-        $this->maxSize         = env('alioss.maxsize',30 * 1024 * 1024);
+
+        $this->accessKeyId     = Env::get('alioss.access_key_id','');
+        $this->accessKeySecret = Env::get('alioss.access_key_secret','');
+        $this->endpoint        = Env::get('alioss.endpoint','');
+        $this->bucket          = Env::get('alioss.bucket','');
+        $this->maxSize         = Env::get('alioss.maxsize', 100 * 1024 * 1024);
 
 
         $this->ossClient = new \OSS\OssClient($this->accessKeyId, $this->accessKeySecret, $this->endpoint);
@@ -35,7 +37,7 @@ class UploadTool
 
     /**
      * 文件单一入口
-     * @return UploadTool|null
+     * @return OssLib|null
      */
     public static function getInstance()
     {
@@ -57,34 +59,35 @@ class UploadTool
     public function uploadFile($file, $dir = '')
     {
 
-        // tp5
-        /*$fileInfo     = $file->getInfo();
+        $fileInfo     = $file->getInfo();
+
         $tempPath     = $fileInfo['tmp_name'];
         $originalName = $fileInfo['name'];
+        $size         = $fileInfo['size'];
         $originalArr  = explode('.', $originalName);
-        $extension    = end($originalArr);*/
-
+        $extension    = end($originalArr);
         // tp60
-        $tempPath     = $file->getRealPath();
+       /* $tempPath     = $file->getRealPath();
         $originalName = $file->getOriginalName();
         $extension    = $file->getOriginalExtension();
-        $size         = $file->getSize();
+        $size         = $file->getSize();*/
 
         if ($size > $this->maxSize) {
             $max_size_m = ceil($this->maxSize/1024/1024);
             throw new \Exception("上传文件大小超出限制，最大允许上传 {$max_size_m} M");
         }
         // laravel 通用方式
-         /*$tempPath     = $file->getRealPath();
-         $originalName = $file->getClientOriginalName();
-         $extension    = $file->getClientOriginalExtension();*/
+        /*$tempPath     = $file->getRealPath();
+        $originalName = $file->getClientOriginalName();
+        $extension    = $file->getClientOriginalExtension();*/
 
 
         $filename = $this->getFilenameMd5() . '.'. $extension;
         $dir = trim(str_replace('\\','/', $dir),'/');
-        if (empty(!$dir)) {
+        if (!empty($dir)) {
             $dir .= '/';
         }
+        $dir .= date("Ymd") . '/';
         $object = $filePathName = $dir . $filename;  // 拼接文件夹和文件名
         $this->ossClient->uploadFile($this->bucket, $object, $tempPath); // oss 上传方式 1
 //        $this->ossClient->putObject($this->bucket, $object, file_get_contents($tempPath));  // oss 上传方式 2

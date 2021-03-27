@@ -1,6 +1,8 @@
 <?php
 
-namespace app\libs\ding;
+namespace app\common\library\ding;
+
+use think\facade\Log;
 
 /**
  * 钉钉群预警

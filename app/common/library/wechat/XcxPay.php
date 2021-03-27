@@ -1,6 +1,6 @@
 <?php
 
-namespace app\libs\wechat;
+namespace app\common\library\wechat;
 
 /**
  * 小程序用户提现

@@ -3,7 +3,6 @@
 namespace app\controller\miniprogram;
 
 
-use app\common\tools\LclJwtTool;
 use app\logic\GoodsLogic;
 use app\model\Advertise;
 use app\model\GoodsIntroduceImg;

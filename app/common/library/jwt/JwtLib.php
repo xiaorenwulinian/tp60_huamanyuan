@@ -1,8 +1,8 @@
 <?php
 
-namespace app\libs\lclJwt;
+namespace app\common\library\jwt;
 
-class LclJwtLib 
+class JwtLib
 {
     /**
      * 支持的算法

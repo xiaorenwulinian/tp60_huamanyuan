@@ -1,9 +1,11 @@
 <?php
 
-namespace app\common\tools;
+namespace app\common\library;
 
+use EasyWeChat\Kernel\Support\Str;
+use function EasyWeChat\Kernel\Support\str_random;
 
-class StringTool
+class StringLib
 {
 
     protected static $snakeCache = [];
@@ -12,6 +14,12 @@ class StringTool
 
     protected static $studlyCache = [];
 
+
+
+    public static function  rand($length = 4)
+    {
+        return Str::random($length);
+    }
 
     /**
      * 获取指定长度的随机字母数字组合的字符串
@@ -59,34 +67,54 @@ class StringTool
     }
 
     /**
+     * 获取全球唯一标识
+     * @return string
+     */
+    public static function uuid()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
+    }
+
+
+    /**
      * 检查字符串中是否包含某些字符串
      * @param string       $haystack
      * @param string|array $needles
      * @return bool
      */
-   public static function container(string $haystack, $needles): bool
-   {
-       $needles = (array)$needles;
-       foreach ($needles as $needle) {
-           if ('' !== $needles && mb_strpos($haystack, $needle) !== false) {
-               return true;
-           }
-       }
+    public static function container(string $haystack, $needles): bool
+    {
+        $needles = (array)$needles;
+        foreach ($needles as $needle) {
+            if ('' !== $needles && mb_strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
 
-       return false;
-   }
+        return false;
+    }
 
-   public static function endsWith($haystack, $needles): bool
-   {
-       $needles = (array)$needles;
-       foreach ($needles as $needle) {
-           if ($needle === mb_substr($haystack, -mb_strlen($needle), null, 'UTF-8')) {
-               return true;
-           }
-       }
+    public static function endsWith($haystack, $needles): bool
+    {
+        $needles = (array)$needles;
+        foreach ($needles as $needle) {
+            if ($needle === mb_substr($haystack, -mb_strlen($needle), null, 'UTF-8')) {
+                return true;
+            }
+        }
 
-       return  false;
-   }
+        return  false;
+    }
 
 
 
@@ -221,5 +249,6 @@ class StringTool
     {
         return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
     }
+
 
 }

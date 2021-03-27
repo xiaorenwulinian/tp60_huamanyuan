@@ -3,7 +3,7 @@
 namespace app\middleware;
 
 
-use app\common\tools\LclJwtTool;
+use app\common\library\LclJwtLib;
 
 class MiniProgramAuthCheck
 {
@@ -16,7 +16,7 @@ class MiniProgramAuthCheck
      */
     public function handle($request, \Closure $next)
     {
-        $wechat = LclJwtTool::getInstance()->getWeChatInfoMiniProgram();
+        $wechat = LclJwtLib::getInstance()->getWeChatInfoMiniProgram();
         if ( empty($wechat)) {
             return failed_response('非法攻击～！');
         }

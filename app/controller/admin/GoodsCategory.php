@@ -3,7 +3,7 @@
 namespace app\controller\admin;
 
 
-use app\common\tools\ArrayTool;
+use app\common\library\ArrayLib;
 use think\facade\Db;
 
 class GoodsCategory extends AdminBase
@@ -11,7 +11,7 @@ class GoodsCategory extends AdminBase
    public function lst()
    {
         $goodsCate = Db::table('goods_category')->order('sort_order','asc')->select()->toArray();
-        $data = ArrayTool::getTree($goodsCate);
+        $data = ArrayLib::getTree($goodsCate);
         return view('admin/goods_category/lst',['data' => $data]);
    }
 
@@ -43,7 +43,7 @@ class GoodsCategory extends AdminBase
             return success_response();
         }
         $goodsCate = Db::table('goods_category')->order('sort_order','asc')->select()->toArray();
-        $parentData = ArrayTool::getTree($goodsCate);
+        $parentData = ArrayLib::getTree($goodsCate);
         $ret = [
             'parentData' => $parentData
         ];
@@ -89,9 +89,9 @@ class GoodsCategory extends AdminBase
 
         $goodsCate = Db::table('goods_category')->order('sort_order','asc')->select()->toArray();
         $data = Db::table('goods_category')->where('id', $id)->find();
-        $parentData = ArrayTool::getTree($goodsCate);
+        $parentData = ArrayLib::getTree($goodsCate);
         //修改后的文章分类不能是本身和子级
-        $childrenId = ArrayTool::getChildren($goodsCate, $id);
+        $childrenId = ArrayLib::getChildren($goodsCate, $id);
         $childrenId[] = $id;
         $ret = [
             'parentData' => $parentData,
