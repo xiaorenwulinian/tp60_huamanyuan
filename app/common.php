@@ -93,3 +93,100 @@ if (!function_exists('show_image')) {
 
 }
 
+if (!function_exists('is_date_format')) {
+    function is_date_format($date)
+    {
+        $ret = strtotime($date);
+
+        return $ret !== FALSE && $ret != -1;
+    }
+}
+
+if (!function_exists('ids_transfer_names')) {
+    /**
+     * ids 抓化成名称， 如 1，2 转化成， a,b
+     * @param $data
+     * @param $ids
+     * @return string
+     */
+    function ids_transfer_names($data, $ids)
+    {
+        $arr = [];
+        if (!empty($ids)) {
+            $arr = explode(',', $ids);
+        }
+        $retData = [];
+        foreach ($arr as $v) {
+            $retData[] = $data[$v] ?? '';
+        }
+        $names = implode(',',$retData);
+        return $names;
+    }
+}
+
+
+if (!function_exists('is_image_extension')) {
+
+    /*
+     * 是否是图片格式
+     */
+    function is_image_extension($file)
+    {
+        if (empty($file)) {
+            return false;
+        }
+        $imgExtensionArr = [
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'svg',
+            'bmp',
+            'tif',
+
+        ];
+        list($filename, $ext) = explode('.', $file);
+        $ext = strtolower($ext);
+        if (in_array($ext, $imgExtensionArr)) {
+            return true;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('date_gap_year')) {
+    /*
+     * 两个日期差（year）
+     */
+    function date_gap_year($begin, $end)
+    {
+        if (empty($begin) || empty($end)) {
+            return 0;
+        }
+        $gap = strtotime($begin) - strtotime($end);
+        $gapYear = $gap / 3600 / 24 /365;
+        return abs(number_format($gapYear, 2));
+    }
+
+}
+
+if (!function_exists('date_y_m_d')) {
+    /**
+     * @param $data
+     * @return float|int
+     */
+    function date_y_m_d($data)
+    {
+        if (empty($data)) {
+            return $data;
+        }
+        if (!is_int($data)) {
+            $data =  strtotime($data);
+        }
+        return date('Y-m-d', $data);
+    }
+
+}
+
+
+

@@ -14,7 +14,7 @@ class ArrayTool
      * @param bool $isClear
      * @return array
      */
-    public static function getTree($data, $parent_id = 0, $level = 0, $isClear = TRUE)
+    public static function getTree($data, $parent_id = 0, $level = 1, $isClear = TRUE)
     {
         static $ret = [];
         if ($isClear) {
@@ -25,6 +25,55 @@ class ArrayTool
                 $v['level'] = $level;
                 $ret[] = $v;
                 self::getTree($data, $v['id'], $level+1, FALSE);
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * 获取所有的树形菜单（层级）
+     * @param $data
+     * @param int $parent_id
+     * @param int $level
+     * @param bool $isClear
+     * @return array
+     */
+    public static function getTreeMulti($data, $parent_id = 0, $level = 1)
+    {
+        $ret = [];
+        foreach ($data as $k => $v) {
+            if($v['parent_id'] == $parent_id) {
+                $v['level'] = $level;
+                $children = self::getTreeMulti($data, $v['id'], $level+1);
+                if (!empty($children)) {
+                    $v['children'] = $children;
+                }
+                $ret[] = $v;
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * 获取所有子集id
+     * @param $data
+     * @return array
+     */
+    public static function TreeChildrenIdArr($data)
+    {
+        $ret = [];
+        if (empty($data)) {
+            return [];
+        }
+        foreach ($data as $v) {
+            array_push($ret, $v['id']);
+            if (!empty($v['children'])) {
+                $temp = self::TreeChildrenIdArr($v['children']);
+                if (!empty($temp)) {
+                    foreach ($temp as $v1) {
+                        array_push($ret,$v1);
+                    }
+                }
             }
         }
         return $ret;
