@@ -2,194 +2,114 @@
 
 namespace app\common\service;
 
-use app\common\library\jwt\JwtLib;
+
+use think\facade\Db;
 
 /**
  *
- * Class CheckRateService
+ * Class CommonService
  * @package app\common\service
  */
-class JwtService {
-
-    private static $instance = null;
-
-    private function __construct()
-    {
-    }
-
+class CommonService
+{
     /**
-     * @return null
+     * 影响因素
+     * @param $params
+     * @param $facilityId
+     * @param $content
+     * @return bool
      */
-    public static function getInstance() : JwtService
+    public function environmentFactor($params, $facilityId, $content, $type = 1)
     {
-        if (is_null(static::$instance)) {
-            static::$instance = new self();
+        $curDate = date('Y-m-d H:i:s');
+        if (!empty($content)) {
+            $data = Db::name('environment_factor')
+                ->where('id_deleted',2)
+                ->where('facility_id', $facilityId)
+                ->where('type', $type)
+                ->column('*','id');
+
+            $hasIdArr = array_keys($data);
+            $insert = [];
+            $reqIdArr = [];
+
+            foreach ($content as $v) {
+                if (empty($v['name'])
+                    || empty($v['project'])
+                ) {
+                    continue;
+                }
+
+                if ($v['id'] == 0) {
+                    $temp = [
+                        'name'          => $v['name'],
+                        'project'       => $v['project'],
+                        'company_id'    => $params['company_id'],
+                        'facility_id'   => $facilityId,
+                        'type'          => $type,
+                        'related_activity' => $v['related_activity'] ?? '',
+                        'related_product'  => $v['related_product'] ?? '',
+                        'create_time'   => $curDate,
+                        'update_time'   => $curDate,
+                    ];
+                    array_push($insert, $temp);
+                } else {
+                    if (!in_array($v['id'], $hasIdArr)) {
+                        continue;
+                    }
+
+                    $reqIdArr[] = $v['id'];
+                    $curData = $data[$v['id']];
+
+                    if ($curData['name'] == $v['name']
+                        && $curData['project'] == $v['project']
+                    ) {
+                        continue;
+                    }
+
+                    Db::name('environment_factor')
+                        ->where('id',$v['id'])
+                        ->where('type', $type)
+                        ->update([
+                            'name'          => $v['name'],
+                            'project'       => $v['project'],
+                            'related_activity' => $v['related_activity'] ?? '',
+                            'related_product'  => $v['related_product'] ?? '',
+                            'update_time'      => $curDate,
+                        ]);
+                }
+
+            }
+
+            $deleteIdArr = array_diff($hasIdArr, $reqIdArr);
+
+            if (!empty($deleteIdArr)) {
+                Db::name('environment_factor')
+                    ->where('id','in', $deleteIdArr)
+                    ->where('type', $type)
+                    ->where('facility_id',$facilityId)
+                    ->update([
+                        'is_deleted' => 1,
+                        'update_time'=> $curDate,
+                    ]);
+            }
+
+            if (!empty($insert)) {
+                Db::name('environment_factor')->insertAll($insert);
+            }
+
+        } else {
+            Db::name('environment_factor')
+                ->where('type', $type)
+                ->where('facility_id',$facilityId)
+                ->update([
+                    'is_deleted' => 1,
+                    'update_time'=> $curDate,
+                ]);
+
         }
 
-        return self::$instance;
+        return true;
+
     }
-
-    private function __clone()
-    {
-        // TODO: Implement __clone() method.
-    }
-
-
-    /**
-     * api 生成token
-     * @param Array $user 当前用户
-     * @return string
-     */
-    public function generateTokenApi(Array $user)
-    {
-
-        if (!empty($user['id'])) {
-            $user['user_id'] = $user['id'];
-        }
-
-        $secretKey = 'token_mobile';
-        $time = time();
-        $expireTime = $time + 3600 * 24 * 30;
-        $secretToken = array(
-//            "iss"       => "",
-//            "aud"       => "",
-            "iat"       => $time,
-            "nbf"       => $time,
-            "exp"       => $expireTime,
-            "user_id"   => $user['user_id'], // 用户ID
-            "user_info" => $user, // 不建议存太多信息，用户ID和手机号即可，敏感信息会被窃取
-        );
-        try {
-            $jwtToken = JwtLib::encrypt($secretToken, $secretKey);
-
-        } catch (\Exception $e) {
-            return api_failed($e->getMessage());
-        }
-
-        return $jwtToken;
-    }
-
-
-    /**
-     * 小程序 token验证，获取当前用户ID
-     * @return mixed
-     */
-    public function getUserIdMobile()
-    {
-        $userinfo = $this->getUserInfoMobile();
-        return $userinfo['user_id'];
-    }
-
-
-    /**
-     * 小程序 token验证，获取当前用户ID
-     * @return mixed
-     */
-    public function getUserInfoMobile()
-    {
-        $secretKey = 'token_mobile';
-
-        $authorization = request()->header('authorization');
-
-        if (empty($authorization) || false === stristr($authorization, ' ')) {
-            return api_failed("token 格式错误", 401);
-        }
-
-        list($bearer, $jwtToken) = explode(' ', $authorization);
-
-        if ($bearer != 'bearer') {
-//            return  api_failed('');
-        }
-//            JWT::$leeway = 40; // $leeway in seconds  token 过期时间到期，延迟失效 单位秒
-        $result = JwtLib::decrypt($jwtToken, $secretKey, array('HS256'));
-
-        if ($result['code'] === 1) {
-
-            return api_failed($result['message'], 401);
-        }
-
-        if ($result['code'] != 0) {
-            return api_failed($result['message'], 401);
-        }
-        $decoded = $result['data'];
-
-        $decodedArray = (array)$decoded;
-
-        $userInfo =  (array)$decodedArray['user_info'];
-
-        return $userInfo;
-    }
-
-    /**
-     * 小程序 token验证，获取当前用户ID
-     * @return mixed
-     */
-    public function getUserIdApi()
-    {
-
-        $userInfo = $this->getUserInfoApi();
-        $uid =  $userInfo['user_id'];
-
-        return $uid;
-    }
-
-
-    /**
-     * 小程序 token验证，获取当前用户ID
-     * @return mixed
-     */
-    public function getUserInfoApi()
-    {
-        $secretKey = 'token_mobile';
-
-        $authorization = request()->header('authorization');
-
-        if (empty($authorization) || false === stristr($authorization, ' ')) {
-            return api_failed("token 格式错误", 401);
-        }
-
-        list($bearer, $jwtToken) = explode(' ', $authorization);
-
-        if ($bearer != 'bearer') {
-//            return  api_failed('');
-        }
-//            JWT::$leeway = 40; // $leeway in seconds  token 过期时间到期，延迟失效 单位秒
-        $result = JwtLib::decrypt($jwtToken, $secretKey, array('HS256'));
-
-        if ($result['code'] === 1) {
-
-            return api_failed($result['message'], 401);
-        }
-
-        if ($result['code'] != 0) {
-            return api_failed($result['message'], 401);
-
-        }
-        $decoded = $result['data'];
-
-        $decodedArray = (array)$decoded;
-        $userInfo =  (array)$decodedArray['user_info'];
-
-        return $userInfo;
-    }
-
-    public function getUserInfo()
-    {
-        $userInfo = $this->getUserInfoApi();
-        return $userInfo;
-    }
-
-    public function getCompanyId()
-    {
-        $userInfo = $this->getUserInfoApi();
-        return $userInfo['company_id'];
-    }
-
-    public function getUserId()
-    {
-        $userInfo = $this->getUserInfoApi();
-        return $userInfo['id'];
-    }
-
-
 }
