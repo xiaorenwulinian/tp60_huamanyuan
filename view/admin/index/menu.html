@@ -21,7 +21,7 @@
             <li class="treeview ">
                 <a href="">
                     <i class="fa fa-th"></i>
-                    <span>{$v.pri_name}</span>
+                    <span>{$v.privilege_name}</span>
                     <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                     </span>
@@ -34,7 +34,7 @@
                         <?php if( $v1['route_url'] == 'null' || empty($v1['route_url']) ): ?>
                         <a href="">
                             <i class="fa <?php echo empty($v1['pri_icon']) ? 'fa-circle-o' : $v1['pri_icon'] ;?>"></i>
-                            {$v1.pri_name}1
+                            {$v1.privilege_name}1
                             <span class="pull-right-container">
                                   <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -42,7 +42,7 @@
                         <?php else :?>
                         <a href="<?php echo  url($v1['route_url'],[],false); ?>" target="mainFrame">
                             <i class="fa <?php echo empty($v1['pri_icon']) ? 'fa-circle-o' : $v1['pri_icon'] ;?>"></i>
-                            {$v1.pri_name}
+                            {$v1.privilege_name}
                             <span class="pull-right-container">
                                   <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -55,7 +55,7 @@
                             <li>
                                 <a href="<?php echo url($v2['route_url'],[],false); ?>" target="mainFrame">
                                     <i class="fa <?php echo empty($v2['pri_icon']) ? 'fa-circle-o' : $v2['pri_icon'] ;?> "></i>
-                                    {$v2.pri_name}
+                                    {$v2.privilege_name}
                                 </a>
                             </li>
                             <?php endforeach; ?>

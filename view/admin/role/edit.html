@@ -1,0 +1,260 @@
+{extend name="admin/layout/basic" /}
+
+{block name="style"}
+
+<link href="/static/admin/jquery-file-upload-9.28.0/css/jquery.fileupload.css" rel="stylesheet" type="text/css"/>
+
+<style>
+    .thumb_img{
+        width: 200px;
+    }
+</style>
+
+{/block}
+
+{block name="content"}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        角色编辑
+        <small> <a href="javascript:void(0);" onclick="window.history.back();" class="pull-right">角色列表</a></small>
+    </h1>
+
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title"></h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <form class="form-horizontal" id="formSubmit" action="">
+
+                        <div class="form-group">
+                            <label for="" class="col-sm-2 control-label">参考角色：</label>
+                            <div class="col-sm-8">
+                                <select name="relation_id" class="relation_id form-control">
+                                    <option value="0">请选择</option>
+                                    <?php foreach($roleData as $k => $p): ?>
+                                    <option value="{$p['id']}" <?php echo $p['id'] == $data['relation_id'] ? "selected='selected'":""?>>
+                                        {$p['role_name']}
+                                    </option>
+                                    <?php endforeach;?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-sm-2 control-label">角色名称<span style="color: red">*</span>：</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="role_name" value="{$data.role_name}"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2 control-label">角色描述：</label>
+                            <div class="col-sm-8">
+                                <textarea id="role_desc" class="form-control"  name="role_desc">{$data.role_desc}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-sm-2 control-label">权限列表<span style="color: red">*</span>：</label>
+                            <div class="col-sm-8">
+                                <table cellspacing="1" cellpadding="3" width="100%">
+
+                                    <tr>
+                                        <td>
+                                            <?php foreach ($priData as $k => $v):
+                                                if(in_array($v['id'],$hasPriArr)) {
+                                                    $check = 'checked="checked"';
+                                                }
+
+                                                else {
+                                                    $check = '';
+                                                }
+
+                                            ?>
+                                            <?php echo str_repeat('--', ($v['level'] - 1 ) * 8); ?>
+                                            <input {$check}  level="{$v.level}" type="checkbox" name="pri_id[]" value="{$v.id}" />&nbsp;&nbsp;{$v.privilege_name} <br />
+                                            <?php endforeach; ?>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <div class="form-group">
+                            <div style="text-align: center; margin-top: 40px">
+                                <button type="submit" class="curSubmit btn btn-primary btn-lg">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</section>
+<div style="margin-bottom: 100px;"></div>
+<!-- /.content -->
+{/block}
+
+{block name="script"}
+
+<script src="/static/admin/jquery-file-upload-9.28.0/js/vendor/jquery.ui.widget.js" type="text/javascript"></script>
+<script src="/static/admin/jquery-file-upload-9.28.0/js/jquery.fileupload.js" type="text/javascript"></script>
+<script src="/static/admin/jquery-file-upload-9.28.0/js/jquery.iframe-transport.js" type="text/javascript"></script>
+
+
+<script>
+
+
+    var id = "<?php echo $data['id'];?>";
+    var has_submit = false;
+    function resetPrivilege(privilege_ids)
+    {
+        $("input[name='pri_id[]']").each(function (k, v) {
+            $(v).prop("checked", false);
+        });
+        if (privilege_ids.length > 0) {
+            var privilege_id_arr = privilege_ids.split(',');
+            $("input[name='pri_id[]']").each(function (k, v) {
+                if (privilege_id_arr.indexOf($(v).val()) > -1) {
+                    $(v).prop("checked", true);
+                }
+            });
+        }
+    }
+    $(function () {
+        $('.relation_id').on('change',function () {
+            $.ajax({
+                type: 'get',
+                url:  '/admin/role/privilegeByRoleId',
+                dataType: 'json',
+                data: {
+                    id : $(this).val()
+                },
+                success: function(ret){
+                    console.log(ret);
+                    if(ret.code == 0) {
+                        var privilege_id = ret.data.privilege_id;
+                        resetPrivilege(privilege_id);
+                    } else {
+                        layer.msg(ret.msg, {icon: 5,time:1000,});
+                        return false;
+                    }
+                }
+            });
+        });
+
+        $(":checkbox").click(function(){
+            var cur_level = $(this).attr("level");
+            if($(this).is(":checked")) {
+                var tmplevel = cur_level;
+                var allprev = $(this).prevAll(":checkbox");
+                $(allprev).each(function(k,v){
+                    if($(v).attr("level") < tmplevel) {
+                        tmplevel--;
+                        $(v).attr("checked", "checked");
+                    }
+                });
+                var allprev = $(this).nextAll(":checkbox");
+                $(allprev).each(function(k,v){
+                    if($(v).attr("level") > cur_level)
+                        $(v).prop("checked", true);
+                    else
+                        return false;
+                });
+            } else {
+                var allprev = $(this).nextAll(":checkbox");
+                $(allprev).each(function(k,v){
+                    if($(v).attr("level") > cur_level)
+                        $(v).prop("checked", false);
+                    else
+                        return false;
+                });
+            }
+        });
+
+        $('.curSubmit').on('click',function () {
+            var url = "/admin/role/edit";
+            var form_param = $('#formSubmit').serialize();
+
+            var role_name = $("input[name='role_name']").val();
+            if (role_name.length < 1) {
+                alert('角色名称必须');
+                return false;
+            }
+            var pri_arr = [];
+            $("input[name='pri_id[]']").each(function () {
+                if ($(this).is(":checked")) {
+                    pri_arr.push($(this).val());
+                }
+
+            });
+            if (pri_arr.length < 1) {
+                alert('请选择权限');
+                return false;
+            }
+
+            var privilege_ids = pri_arr.join(',');
+            var relation_id = $('.relation_id').val();
+            var role_desc = $('#role_desc').val();
+
+            var json_data = {
+                privilege_ids: privilege_ids,
+                role_name: role_name,
+                id: id,
+                relation_id: relation_id,
+                role_desc: role_desc,
+
+            }
+            console.log(pri_arr, role_name, privilege_ids);
+            // return false;
+
+            if (has_submit == true) {
+                return  false;
+            }
+            has_submit = true;
+            $.ajax({
+                type: 'post',
+                url:  url,
+                dataType: 'json',
+                data: json_data,
+                success: function(ret){
+                    console.log(ret);
+                    if(ret.code == 0) {
+                        layer.msg('操作成功',{
+                            time:1000,
+                            icon: 6,
+                            end:function () {
+                                location.href = "/admin/role/lst";
+                            }
+                        })
+                    } else {
+                        has_submit = false;
+                        alert(ret.msg);
+                        return false;
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+
+</script>
+{/block}

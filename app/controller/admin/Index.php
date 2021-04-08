@@ -20,9 +20,9 @@ class Index
         $adminId = session('admin_user_id');
         $adminId = 1;
         if($adminId == 1){
-            $sql = 'SELECT * FROM privilege WHERE is_display=0';
-        }
-        else{
+            $sql = 'SELECT * FROM privilege WHERE is_menu=0';
+        } else {
+
             $sql = 'SELECT b.*
 			  FROM role_privilege a
 			   LEFT JOIN privilege b ON a.pri_id=b.id

@@ -32,9 +32,21 @@ Route::group('/admin', function(){
         Route::any('add', 'admin.privilege/add');
         Route::any('edit', 'admin.privilege/edit');
         Route::any('changeShow', 'admin.privilege/changeShow');
-        Route::any('delete', 'admin.privilege/delete');
+        Route::any('changeMenu', 'admin.privilege/changeMenu');
+//        Route::any('delete', 'admin.privilege/delete');
         Route::any('editSort', 'admin.privilege/editSort');
     });
+
+    Route::group('role', function () {
+        Route::get('privilegeByRoleId', 'admin.role/privilegeByRoleId');
+        Route::get('lst', 'admin.role/lst');
+        Route::any('add', 'admin.role/add');
+        Route::any('edit', 'admin.role/edit');
+        Route::any('changeShow', 'admin.role/changeShow');
+//        Route::any('delete', 'admin.role/delete');
+        Route::any('editSort', 'admin.role/editSort');
+    });
+
     // 商品分类，暂未使用
     Route::group('goodsCategory', function () {
         Route::get('lst', 'admin.GoodsCategory/lst');

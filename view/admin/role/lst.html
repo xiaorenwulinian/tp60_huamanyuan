@@ -25,18 +25,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        权限列表
-        <small> <a href="/admin/privilege/add" class="pull-right">权限添加</a></small>
+        角色列表
+        <small> <a href="/admin/role/add" class="pull-right">角色添加</a></small>
     </h1>
 </section>
 
 <!-- Main content -->
 <section class="content">
     <div class="common_search">
-        <form class="form-inline" action="/admin/privilege/lst" id="form_search">
+        <form class="form-inline" action="/admin/role/lst" id="form_search">
             <input type="text" class="form-control" name="name" placeholder="名称" value="{:input('name')}">
-            
 
+
+            <input  type="hidden" name="page_size" id="cur_show_page" value="{$pageSize}"/>
             <input class="btn btn-flat btn-primary" type="submit" value="搜索">
             <!--<input class="btn btn-flat btn-primary m_10" onclick="location.href='{:url(\'lst\')}'" type="button" value="显示全部">-->
             <!--<input class="btn btn-flat btn-warning multi_del" type="button" value="批量删除">
@@ -45,7 +46,7 @@
                 <option value='1'>导出选中数据</option>
                 <option value='2'>导出全部数据</option>
             </select>-->
-<!--            <a class="btn btn-flat btn-success m_10 f_r" href="/admin/privilege/add"><i class="fa fa-plus m-r-10"></i>添 加</a>-->
+            <!--            <a class="btn btn-flat btn-success m_10 f_r" href="/admin/role/add"><i class="fa fa-plus m-r-10"></i>添 加</a>-->
         </form>
     </div>
     <div class="row">
@@ -60,77 +61,39 @@
                     <table id="example2" class="table table-bordered table-hover">
                         <thead>
                         <tr>
-<!--                            <th style="text-align: center"> <input type="checkbox" name="is_multi_select"  class="is_multi_select"> </th>-->
+                            <!--                            <th style="text-align: center"> <input type="checkbox" name="is_multi_select"  class="is_multi_select"> </th>-->
                             <th style="text-align: center">ID</th>
-                            <th style="text-align: center">权限名称</th>
-                            <th style="text-align: center">父级id</th>
-                            <th style="text-align: center">标识</th>
-                            <th style="text-align: center">后台路由</th>
-                            <th style="text-align: center">级别</th>
-                            <th style="text-align: center">排序</th>
-                            <th style="text-align: center">是否菜单</th>
-                            <th style="text-align: center">是否使用</th>
+                            <th style="text-align: center">角色名称</th>
+                            <th style="text-align: center">描述</th>
+
                             <th style="text-align: center">操作</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php foreach($data as $v):?>
                         <tr style="text-align: center">
-<!--                            <td style="vertical-align: middle"><input type="checkbox" class="multi_select_input" name="multi_select[]" value="{$v['id']}"/></td>-->
+                            <!--                            <td style="vertical-align: middle"><input type="checkbox" class="multi_select_input" name="multi_select[]" value="{$v['id']}"/></td>-->
                             <td style="vertical-align: middle">{$v['id']}</td>
-                            <td style="vertical-align: middle;text-align: left;min-width: 260px">
-                                <?php echo str_repeat("--",4 * ($v['level'] - 1)) . '&nbsp;&nbsp;' . $v['privilege_name']; ?>
-
-                            </td>
-                            <td style="vertical-align: middle">{$v['parent_id']}</td>
-                            <td style="vertical-align: middle">{$v['identify']}</td>
-                            <td style="vertical-align: middle">{$v['route_url']}</td>
-                            <td style="vertical-align: middle">{$v['level']}</td>
-                            <td style="vertical-align: middle">
-                                <input type="text" class="edit_sort_id" data-id="{$v['id']}" value="{$v['sort_id']}" style="text-align: center;width: 40px;">
-                            </td>
+                            <td style="vertical-align: middle">{$v['role_name']}</td>
+                            <td style="vertical-align: middle">{$v['role_desc']}</td>
 
                             <td style="vertical-align: middle">
-                                <a href="javascript:void(0)" class="change_menu" data-id="{$v['id']}">
-                                    <?php if ($v['is_menu'] == 1): ?>
-                                    <span style="color: red">√</span>
-                                    <?php else:?>
-
-                                    <span style="color: blue">X</span>
-
-                                    <?php endif;?>
-                                </a>
-
-                            </td>
-
-
-                            <td style="vertical-align: middle">
-                                <a href="javascript:void(0)" class="change_show" data-id="{$v['id']}">
-                                    <?php if ($v['is_show'] == 1): ?>
-                                    <span style="color: red">√</span>
-
-                                    <?php else:?>
-                                    <span style="color: blue">X</span>
-
-                                    <?php endif;?>
-                                </a>
-
-                            </td>
-
-                            <td style="vertical-align: middle">
-                                <a href="<?php echo url('/admin/privilege/edit?id='.$v['id'],[], false); ?>" class="btn btn-flat btn-info btn-xs" title="编辑">
+                                <a href="<?php echo url('/admin/role/edit?id='.$v['id'],[], false); ?>" class="btn btn-flat btn-info btn-xs" title="编辑">
                                     <i class="fa fa-edit"></i> 编辑
                                 </a>
-                                <!--<a href="javascript:void(0)" data-id="{$v['id']}" class="cur_del btn btn-flat btn-warning btn-xs" title="移除">
+                                <a href="javascript:void(0)" data-id="{$v['id']}" class="cur_del btn btn-flat btn-warning btn-xs" title="移除">
                                     <i class="fa fa-trash-o"></i> 删除
-                                </a>-->
+                                </a>
                             </td>
                         </tr>
                         <?php endforeach;?>
                         </tbody>
                     </table>
 
-
+                    <div>
+                        {$pageShow|raw}
+                        {$pageSizeSelect|raw}
+                    </div>
 
                 </div>
             </div>
@@ -150,16 +113,24 @@
     $(function () {
 
 
+        /**
+         * 切换展示状态
+         */
+        $(".change_show").on('click', function () {
+            var id = $(this).attr('data-id');
+            var url = "<?php echo url('/admin/role/changeShow',[],false);?>";
+            change_show_status(url, id);
+        });
 
         /**
          * 导出
          */
         $("select[name='export_data_change']").on('change', function () {
             var export_type = parseInt($(this).val());
-            var url = "/admin/privilege/exportData?";
+            var url = "/admin/role/exportData?";
             switch (export_type) {
                 case 0 :
-                  break;
+                    break;
                 case 1 :
                     var has_checked  = [];
                     $("input[name='multi_select[]']:checked").each(function () {
@@ -199,33 +170,13 @@
                 });
             }
         });
-
-        /**
-         * 切换展示状态
-         */
-        $(".change_show").on('click', function () {
-            var id = $(this).attr('data-id');
-            var url = "<?php echo url('/admin/privilege/changeShow',[],false);?>";
-            change_show_status(url, id);
-        });
-        $(".change_top").on('click', function () {
-            var id = $(this).attr('data-id');
-            var url = "<?php echo url('/admin/privilege/changeTop',[],false);?>";
-            change_show_status(url, id);
-        });
-        $(".change_menu").on('click', function () {
-            var id = $(this).attr('data-id');
-            var url = "<?php echo url('/admin/privilege/changeMenu',[],false);?>";
-            change_show_status(url, id);
-        });
-
         /**
          * 修改排序
          */
         $('.edit_sort_id').on('blur',function () {
             var id = $(this).attr('data-id');
             var sort_id = $.trim($(this).val());
-            var url = '/admin/privilege/editSort';
+            var url = '/admin/role/editSort';
             edit_sort(url, id, sort_id);
         });
 
@@ -234,7 +185,7 @@
          */
         $(".cur_del").on('click',function () {
             var id = $(this).attr('data-id');
-            var url = "/admin/privilege/delete";
+            var url = "/admin/role/delete";
             delete_one(url, id);
         });
 
@@ -251,7 +202,7 @@
                 alert('请勾选删除项！');
                 return false;
             }
-            var url = "/admin/privilege/delete";
+            var url = "/admin/role/delete";
             delete_multiply(url, has_checked_str);
         });
 
